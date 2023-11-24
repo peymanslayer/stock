@@ -1,25 +1,32 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config/config');
-
-module.exports = (req, res, next) => {
-  const token = req.header('Authorization');
+const jwt = require("jsonwebtoken");
+const config = require("../config/config.json");
+const { models } = require("../models/index");
+async function adminMiddelware(req, res, next) {
+  const token = req.header("Authorization");
   if (!token) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const extractToken = token.split(" ")?.[1];
+  const findAdmin = await models.User.findOne({
+    where: { token: extractToken },
+  });
+  if ((findAdmin.role && findAdmin.role === "admin")) {
+    jwt.verify(findAdmin.token, config.development.JWT_SECRET, (err, dec) => {
+      isAdmin(dec);
+    });
+  } else {
+    res.status(400).json("not admin");
   }
 
 
-
-  jwt.verify(token.split(" ")?.[1], config.jwtSecret, (err, decodedToken) => {
-    if (err) {
-      return res.status(401).json({ error: err});
-    }
-
-    // Check if the decoded token has an "is_admin" property set to true
-    if (decodedToken) {
-      req.user = decodedToken;
+  function isAdmin(verifyToken) {
+    if (verifyToken) {
       next();
     } else {
-      return res.status(403).json({ error: 'Forbidden' });
+      res.status(400).json("ادمین نیستید");
     }
-  });
-};
+  }
+}
+
+module.exports = adminMiddelware;
