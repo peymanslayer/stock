@@ -9,7 +9,7 @@ module.exports = (sequelize) => {
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      unique: false,
     },
     is_admin: {
       type: DataTypes.BOOLEAN,
@@ -33,6 +33,10 @@ module.exports = (sequelize) => {
       allowNull:true,
       defaultValue:"user",
 
+    },
+    token:{
+      type: DataTypes.STRING(),
+      unique:true
     }
   },{
     tableName: "Users",
