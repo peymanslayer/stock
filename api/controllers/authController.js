@@ -82,20 +82,15 @@ module.exports = {
             
             // console.log({mobile})
             
-            bcrypt.compare(password, user.password, (err, result) => {
-                if (err) throw err;
-                const match = result;
-                if (!match) return res.status(401).json({ message: "لطفا نام کاربری و رمز عبور را بررسی نمایید"  })
-                // create json web token and send it back to client side
-                delete user.password;
-                jwt.sign({ user,userId:user.id }, config.jwtSecret, { expiresIn: 60 * 60 }, (err, token) => {
-                    if (err) throw err;
-                    delete user.dataValues.password;
-                    res.json({
-                        token,
-                        ...user.dataValues
-                    })
-                })
+            const match= bcrypt.compare(password, user.password);
+            if(!match){
+                res.status(400).json('پسورد درست نیست')
+            }
+
+            const token= jwt.sign({ userId:user.id }, config.development.JWT_SECRET, { expiresIn: 60 * 60 });
+            user.token=token
+            res.json({
+                user:user
             })
 
         } catch (err) {
