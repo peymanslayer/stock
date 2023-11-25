@@ -5,12 +5,10 @@ const { Op } = require('sequelize');
 
 const createStockItem = async (req, res) => {
   try {
-    const { production_date,line,floor,expiration_date,driver_id,vehicle_id,code } = req.body;
     const product = await models.Product.findOne({
-      where:{code:code}
+      where:{code:req.body.code}
     });
-    const stock = await models.Stock.findOne();
-    const stockItem = await models.StockItem.create( { driver_id,vehicle_id,stock_id:stock.id, product_id:product.id,expiration_date:moment(expiration_date).format("YYYY-M-D 00:00:00"),production_date:moment(production_date).format("YYYY-M-D 00:00:00"),login_date:moment().format("YYYY-M-D 00:00:00"),line,floor });
+    const stockItem = await models.StockItem.create( { ...req.body,product_id:product.id,expirationDate:moment().format("YYYY-M-D 00:00:00"),production_date:moment().format("YYYY-M-D 00:00:00"),loginDate:moment().format("YYYY-M-D 00:00:00") });
     res.status(201).json(stockItem);
   } catch (error) {
     console.error(error);
@@ -21,57 +19,8 @@ const createStockItem = async (req, res) => {
 const getAllStockItems = async (req, res) => {
   
   try {
-    const { id, page,code,name } = req.query;
-
-    if(id){
-      const stockItem = await models.StockItem.findOne({
-        where:{id:Number(id)},
-        include: [
-          { model: models.Stock, as: 'stock' },
-          { model: models.Product, as: 'product' },
-          { model: models.Driver, as: 'driver' },
-          { model: models.Vehicle, as: 'vehicle' }
-        ]
-    });
-  
-      res.status(200).json(stockItem);
-     }else if(code || name){
-      let whereObject = {};
-      if(code && code?.length){
-        whereObject.code = code;
-      }
-      if(name && name?.length){
-        whereObject.name = { [Op.like]: `%${name}%` };
-      }
-      const stockItem = await models.StockItem.findAndCountAll({
-        limit: 20,
-        offset: page ? (Number(page) - 1) * 20 : 0,
-        order: [['id', 'DESC']],
-        include: [
-          { model: models.Stock, as: 'stock' },
-          { model: models.Product, as: 'product',where:whereObject
-        },
-        { model: models.Driver, as: 'driver' },
-        { model: models.Vehicle, as: 'vehicle' }
-        ]
-      });
-  
-      res.status(200).json(stockItem);
-     }else{
-    const stockItems = await models.StockItem.findAndCountAll({
-      limit: 20,
-      offset: page ? (Number(page) - 1) * 20 : 0,
-      order: [['id', 'DESC']],
-      include: [
-        { model: models.Stock, as: 'stock' },
-        { model: models.Product, as: 'product' },
-        { model: models.Driver, as: 'driver' },
-        { model: models.Vehicle, as: 'vehicle' }
-      ]
-  });
-
-    res.status(200).json(stockItems);
-   }
+    const findAllStockItem=await models.StockItem.findAll();
+  res.status(200).json(findAllStockItem)
   } catch (error) { 
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });

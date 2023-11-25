@@ -7,6 +7,40 @@ module.exports = (sequelize) => {
       autoIncrement: true,
       primaryKey: true
     },
+    articleCode:{
+      type:DataTypes.STRING
+    },
+    description:{
+      type:DataTypes.STRING
+    },
+    code:{
+      type:DataTypes.STRING,
+      unique:false
+    },
+    vendorName:{
+      type:DataTypes.STRING
+    },
+    pallet:{
+      type:DataTypes.STRING
+    },
+    boxCountEmpty:{
+      type:DataTypes.STRING
+    },
+    typeofUnloadingCar:{
+      type:DataTypes.STRING
+    },
+    introductionRequirements:{
+      type:DataTypes.STRING
+    },
+    depletionBy:{
+      type:DataTypes.STRING
+    },
+    typeofReceiveCar:{
+      type:DataTypes.STRING
+    },
+    driverName:{
+      type:DataTypes.STRING
+    },
     product_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -32,11 +66,14 @@ module.exports = (sequelize) => {
     floor: {
       type: DataTypes.STRING,
     },
-    expiration_date: {
+    floorHeight:{
+      type:DataTypes.STRING
+    },
+    expirationDate: {
       type: DataTypes.DATE,
       allowNull: true,
     },
-    login_date: {
+    loginDate: {
       type: DataTypes.DATE,
       allowNull: true,
     },

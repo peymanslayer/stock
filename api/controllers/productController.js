@@ -2,7 +2,7 @@ const { models } = require('../models/index.js');
 
 const createProduct = async (req, res) => {
   try {
-    const { code, name , name2,box_count,bottom_box_count,floor_height } = req.body;
+    const { code,name,name2,box_count,bottom_box_count,floor_height } = req.body;
     let publicUrl = null;    
 
     if (req.image) {

@@ -34,7 +34,7 @@ module.exports = {
                     //Save user to DB
                     req.body.role?newUser.role=req.body.role:newUser.role=role
                     // create json web token and send it back to client side
-                   const token= jwt.sign({ email:email}, config.development.JWT_SECRET, { expiresIn: 60 * 60 });
+                   const token= jwt.sign({ email:email}, config.development.JWT_SECRET, { expiresIn: "1d" });
                     console.log(token);
                     newUser.token=token;
                    const user= await newUser.save();
@@ -113,3 +113,4 @@ module.exports = {
     }
 
 };
+
