@@ -44,15 +44,14 @@ const getStockItemById = async (req, res) => {
 
 const updateStockItem = async (req, res) => {
   const { id } = req.params;
-  const { production_date,line,floor,expiration_date,code,driver_id,vehicle_id } = req.body;
   // return location_2;
   // res.status(200).json({location_2})
   const product = await models.Product.findOne({
-    where:{code:code}
+    where:{code:req.body.code}
   });
-  const stock = await models.Stock.findOne();
-  // location:`${location_3}${location_2}${location_1}`
-  const data = { driver_id,vehicle_id,code,stock_id:stock.id, product_id:product.id,expiration_date:moment(expiration_date).format("YYYY-M-D 00:00:00"),production_date:moment(production_date).format("YYYY-M-D 00:00:00"),login_date:moment().format("YYYY-M-D 00:00:00"),line,floor }
+  // const stock = await models.Stock.findOne();
+  // // location:`${location_3}${location_2}${location_1}`
+  const data = { ...req.body, product_id:product.id,expirationDate:moment(req.body.expirationDate).format("YYYY-M-D 00:00:00"),production_date:moment(req.body.production_date).format("YYYY-M-D 00:00:00"),loginDate:moment().format("YYYY-M-D 00:00:00") }
   try {
     const [updated] = await models.StockItem.update(data, {
       where: { id },

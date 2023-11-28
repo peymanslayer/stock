@@ -39,9 +39,9 @@ module.exports = (sequelize) => {
       unique:true
     }
   },{
-    tableName: "Users",
-    createdAt: 'created_at', // Rename the createdAt column
-    updatedAt: 'updated_at', // Rename the updatedAt column
+    tableName: "User",
+    createdAt: 'createdAt', // Rename the createdAt column
+    updatedAt: 'updatedAt', // Rename the updatedAt column
   });
   return user
 }

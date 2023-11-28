@@ -33,7 +33,7 @@ module.exports = (sequelize) => {
       type: DataTypes.BIGINT,
     },
   },{
-    tableName: "Products",
+    tableName: "Product",
     createdAt: 'created_at', // Rename the createdAt column
     updatedAt: 'updated_at', // Rename the updatedAt column
   });

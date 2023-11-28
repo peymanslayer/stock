@@ -4,15 +4,15 @@ const { createStockItem, getAllStockItems, getStockItemById, updateStockItem, de
 const authMiddleware = require('./../middleware/authMiddleware');
 
 
-router.post('/',authMiddleware,createStockItem);
+router.post('/',createStockItem);
   
-router.get('/', authMiddleware,getAllStockItems);
+router.get('/', getAllStockItems);
   
-router.get('/:id', authMiddleware,getStockItemById);
+router.get('/:id',getStockItemById);
   
-router.put('/:id', authMiddleware,updateStockItem);
+router.put('/:id',updateStockItem);
   
-router.delete('/:id',authMiddleware,deleteStockItem);
+router.delete('/:id',deleteStockItem);
   
 
 module.exports = router;

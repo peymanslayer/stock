@@ -32,8 +32,9 @@ const userRouter = require('./routes/user');
 const dataRouter = require('./routes/data');
 const driverRouter = require('./routes/driver');
 const vehicleRouter = require('./routes/vehicle');
-
+const router = express.Router();
 // Use routes
+
 app.use('/auth', authRoutes);
 app.use('/product', productRouter);
 app.use('/stock', stockRouter);

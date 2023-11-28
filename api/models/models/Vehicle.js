@@ -14,8 +14,8 @@ module.exports = (sequelize) => {
     },
   },{
     tableName: "Vehicles",
-    createdAt: 'created_at', // Rename the createdAt column
-    updatedAt: 'updated_at', // Rename the updatedAt column
+    createdAt: 'createdAt', // Rename the createdAt column
+    updatedAt: 'updatedAt', // Rename the updatedAt column
   });
 
 }

@@ -4,6 +4,11 @@ const config = require("../config/config.json");
 const {models}=require('../models/index')
 
 module.exports = {
+ 
+    async test(req,res){
+     res.status(200).json('is ok')
+    },
+
     async register(req, res) {
 
         try {
@@ -54,20 +59,31 @@ module.exports = {
     async login(req, res) {
 
         
-        // return res.status(200).json({pass:bcrypt.hash(123456)})
-        // bcrypt.genSalt(10, (err, salt) => {
-        //     if (err) throw err;
-        //     bcrypt.hash("123456", salt, async (err, hash) => {
-        //         if (err) throw err;
-        //         // Add hashed password to new user object
-        //         res.status(200).json({hash})
-               
-
-        //     })
-        // });
 
         // return;
-
+        // {
+        //     "driver_id": 1,
+        //     "vehicle_id": 1,
+        //     "line": "12",
+        //     "floor": "31",
+        //     "stock_id":1,
+        //     "product_id":1,
+        //     "location":"sadat abad",
+        //     "floorHeight":"1",
+        //     "code":"211234561111111111",
+        //     "driverName":"peyman",
+        //     "typeofReceiveCar":"samand",
+        //     "depletionBy":"fgggg",
+        //     "introductionRequirements":"fghj",
+        //     "typeofUnloadingCar":"trac",
+        //     "boxCountEmpty":"1",
+        //     "pallet":"2",
+        //     "vendorName":"bjm",
+        //     "articleCode":"11111",
+        //     "description":"this is message",
+        //     "expirationDate":"2023-12-24T20:30:00.000Z",
+        //     "production_date":"2023-11-24T20:30:00.000Z"
+        //   }
         try {
 
             const { mobile, password } = req.body;

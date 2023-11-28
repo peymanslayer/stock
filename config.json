@@ -1,13 +1,11 @@
 {
   "development": {
-    "username": "root",
-    "password": "BpS19SxvzgVGCwgLFXcl2TOb",
-    "database": "friendly_edison",
-    "host": "aberama.iran.liara.ir",
+    "username": "newusers",
+    "password": "peyman1378()&P",
+    "database": "stock",
+    "host": "https://87.248.156.23",
     "dialect": "mysql",
-    "JWT_SECRET":"1234",
-    "app":"nodejs",
-    "port":30452
+    "JWT_SECRET":"1234"
   },
   "test": {
     "username": "root",

@@ -36,7 +36,7 @@ const sequelize = new Sequelize({
   username: config.development.username, // Replace with your database username
   password: config.development.password, // Replace with your database password
   database: config.development.database, // Replace with your database name
-  port: 3306, // Replace with your database port (default is 3306 for MySQL)
+  port: config.development.port, // Replace with your database port (default is 3306 for MySQL)
 	// logQueryParameters: true,
 	// benchmark: true
   dialectOptions: {

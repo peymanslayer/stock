@@ -5,42 +5,81 @@ module.exports = {
     await queryInterface.createTable('StockItems', {
       id: {
         type: Sequelize.BIGINT,
-        primaryKey: true,
         autoIncrement: true,
-        allowNull: false,
+        primaryKey: true
       },
-      code: {
-        type: Sequelize.STRING,
-        unique: true,
+      articleCode:{
+        type:Sequelize.STRING
+      },
+      description:{
+        type:Sequelize.STRING
+      },
+      code:{
+        type:Sequelize.STRING,
+        unique:false
+      },
+      vendorName:{
+        type:Sequelize.STRING
+      },
+      pallet:{
+        type:Sequelize.STRING
+      },
+      boxCountEmpty:{
+        type:Sequelize.STRING
+      },
+      typeofUnloadingCar:{
+        type:Sequelize.STRING
+      },
+      introductionRequirements:{
+        type:Sequelize.STRING
+      },
+      depletionBy:{
+        type:Sequelize.STRING
+      },
+      typeofReceiveCar:{
+        type:Sequelize.STRING
+      },
+      driverName:{
+        type:Sequelize.STRING
       },
       product_id: {
         type: Sequelize.BIGINT,
         allowNull: false,
-        references: {
-          model: 'Products',
-          key: 'id',
-        },
       },
       stock_id: {
         type: Sequelize.BIGINT,
         allowNull: false,
-        references: {
-          model: 'Stock',
-          key: 'id',
-        },
+      },
+      driver_id: {
+        type: Sequelize.BIGINT,
+        allowNull: false,
+      },
+      vehicle_id: {
+        type: Sequelize.BIGINT,
+        allowNull: false,
       },
       location: {
         type: Sequelize.STRING,
       },
-      expiration_date: {
-        type: Sequelize.DATE,
+      line: {
+        type: Sequelize.STRING,
       },
-      login_date: {
-        type: DataTypes.DATE,
+      floor: {
+        type: Sequelize.STRING,
+      },
+      floorHeight:{
+        type:Sequelize.STRING
+      },
+      expirationDate: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      loginDate: {
+        type: Sequelize.DATE,
         allowNull: true,
       },
       production_date: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: true,
       },
       created_at: {
