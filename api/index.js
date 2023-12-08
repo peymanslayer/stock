@@ -5,7 +5,7 @@ var cors = require('cors')
 const app = express();
 
 app.use(bodyParser.json());
-app.use(cors())
+app.use(cors());
 
 const path = require('path');
 
@@ -32,7 +32,7 @@ const userRouter = require('./routes/user');
 const dataRouter = require('./routes/data');
 const driverRouter = require('./routes/driver');
 const vehicleRouter = require('./routes/vehicle');
-const router = express.Router();
+const locationRoute=require('./routes/locationRoute');
 // Use routes
 
 app.use('/auth', authRoutes);
@@ -43,7 +43,7 @@ app.use('/user', userRouter);
 app.use('/data', dataRouter);
 app.use('/driver', driverRouter);
 app.use('/vehicle', vehicleRouter);
-
+app.use('/locations',locationRoute);
 
 const PORT = process.env.PORT || 3000;
 

@@ -12,21 +12,20 @@ module.exports = {
     async register(req, res) {
 
         try {
-            const { email, password ,name,mobile } = req.body;
+            const { password ,name,mobile } = req.body;
             // Check user enters all fields
-            if (!email || !password) return res.status(400).json({ message: "Please provide email and password" });
+            if (!password) return res.status(400).json({ message: "Please provide email and password" });
             // Check the user enters the right formatted email
             const reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-            if (reg.test(email) === false) return res.status(400).json({ message: "Incorrect email format" });
-            // Check user password length is more than 8 characters
-            if (password.length < 6) return res.status(400).json({ message: "Password must be at least 6 characters long" });
+            // if (reg.test(email) === false) return res.status(400).json({ message: "Incorrect email format" });
+            // Check user password length is more than 8 character
 
             // create new User object to be saved in Database
         
             // Check if user already exist
-            const user = await models.User.findOne({where:{email:email}})
+            const user = await models.User.findOne({where:{name:name}})
             if (user) return res.status(400).json({ message: "Email already registered. Please Login" });
-            const newUser = await models.User.create({email:email,password:password,name:name,mobile:mobile});
+            const newUser = await models.User.create({password:password,name:name,mobile:mobile});
 
             let {role}=newUser;
             // Generate Password Hash
@@ -39,12 +38,11 @@ module.exports = {
                     //Save user to DB
                     req.body.role?newUser.role=req.body.role:newUser.role=role
                     // create json web token and send it back to client side
-                   const token= jwt.sign({ email:email}, config.development.JWT_SECRET, { expiresIn: "1d" });
-                    console.log(token);
+                   const token= jwt.sign({ mobile:mobile}, config.development.JWT_SECRET, { expiresIn: "1d" });
                     newUser.token=token;
-                   const user= await newUser.save();
+                    await newUser.save();
                     res.json({
-                       newUser:user
+                       newUser:newUser
 
                     })
 
@@ -58,54 +56,30 @@ module.exports = {
 
     async login(req, res) {
 
-        
-
-        // return;
-        // {
-        //     "driver_id": 1,
-        //     "vehicle_id": 1,
-        //     "line": "12",
-        //     "floor": "31",
-        //     "stock_id":1,
-        //     "product_id":1,
-        //     "location":"sadat abad",
-        //     "floorHeight":"1",
-        //     "code":"211234561111111111",
-        //     "driverName":"peyman",
-        //     "typeofReceiveCar":"samand",
-        //     "depletionBy":"fgggg",
-        //     "introductionRequirements":"fghj",
-        //     "typeofUnloadingCar":"trac",
-        //     "boxCountEmpty":"1",
-        //     "pallet":"2",
-        //     "vendorName":"bjm",
-        //     "articleCode":"11111",
-        //     "description":"this is message",
-        //     "expirationDate":"2023-12-24T20:30:00.000Z",
-        //     "production_date":"2023-11-24T20:30:00.000Z"
-        //   }
         try {
 
             const { mobile, password } = req.body;
 
             // Check user enters all fields
-            if (!mobile || !password) return res.status(400).json({ message: "لطفا نام کاربری و رمز عبور را وارد نمایید" });
+            if (!mobile || !password)  res.status(400).json({ message: "لطفا نام کاربری و رمز عبور را وارد نمایید" });
             // Check for correct mobile
             const user = await models.User.findOne({ where: { mobile:mobile } });
+            console.log(user);
             // if mobile not found
-            if (!user) return res.status(400).json({ message: "لطفا نام کاربری و رمز عبور را بررسی نمایید"  })
+            if (!user)  res.status(400).json({ message: "لطفا نام کاربری و رمز عبور را بررسی نمایید"  })
             // if mobile found compare hashed password with incoming password
             
             // console.log({mobile})
             
-            const match= bcrypt.compare(password, user.password);
+            const match= await bcrypt.compare(password, user.password);
             if(!match){
                 res.status(400).json('پسورد درست نیست')
             }
 
-            const token= jwt.sign({ userId:user.id }, config.development.JWT_SECRET, { expiresIn: 60 * 60 });
+            const token= jwt.sign({ userId:user.id,mobile:mobile }, config.development.JWT_SECRET, { expiresIn:  "1d" });
             user.token=token
-            res.json({
+            user.save();
+            res.send({
                 user:user
             })
 
@@ -117,16 +91,60 @@ module.exports = {
     async getUser(req, res) {
         try {
             // find user by id
-            const user = await models.User.findById(req.userId)
+            const user = await models.User.findByPk(req.params.id)
                 // return all info but password
-                .select("-password");
             // send info to client
-            res.json(user)
+            res.status(200).json(user)
         } catch (err) {
-            throw err;
+            console.log(err);
+            res.status(500).json('internal server error')
 
         }
-    }
 
+    },
+    async getAllUsersByRole(req,res){
+      try{
+      const getAllUsersByRole=await models.User.findAndCountAll({
+        where:{role:req.body.role},
+        limit:20
+      });
+      res.status(200).json(getAllUsersByRole);
+
+    }catch(err){
+      res.status(500).json('internal sever error');
+    } 
+},
+
+async deleteUser(req,res){
+  try{
+   await models.User.destroy({where:{id:req.params.id}});
+   const findAll=await models.User.findAndCountAll({
+    where:{role:req.body.role},
+     limit:20
+   })
+    res.status(200).json(findAll)
+
+  }catch(err){ 
+   console.log(err);
+   res.status(500).json('internal server error')
+  }
+},
+
+async updateUser(req,res){
+ try{
+  const {id , mobile , name}=req.body;
+  const [updateUser]=await models.User.update({mobile:mobile,name:name},{
+    where:{id:id}
+  });
+  if(updateUser===1){
+    const findOne=await models.User.findByPk(id);
+    res.status(200).json(findOne)
+  }else{
+   res.status(400).json('not update')
+  }
+}catch(err){
+    res.status(500).json('internal')
+}
+}
 };
 

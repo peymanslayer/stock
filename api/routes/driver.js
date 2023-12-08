@@ -6,7 +6,7 @@ const authMiddleware = require('./../middleware/authMiddleware');
 
 router.post('/',adminMiddleware,createDriver);
   
-router.get('/', authMiddleware,getAllDrivers);
+router.get('/',getAllDrivers);
   
 // router.get('/:id', getDriverById);
   

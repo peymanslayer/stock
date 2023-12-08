@@ -6,7 +6,7 @@ const authMiddleware = require('./../middleware/authMiddleware');
 
 router.post('/',adminMiddleware,createVehicle);
   
-router.get('/', authMiddleware,getAllVehicles);
+router.get('/',getAllVehicles);
   
 // router.get('/:id', getVehicleById);
   

@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
 
-  sequelize.define('Vehicle', {
+  sequelize.define('Vehicles', {
     id: {
       type: DataTypes.BIGINT,
       autoIncrement: true,

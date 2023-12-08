@@ -30,6 +30,7 @@ const getAllDrivers = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE').
     res.status(500).json({ msg: 'Internal Server Error', error });
   }
 };
@@ -51,13 +52,12 @@ const getDriverById = async (req, res) => {
 
 const updateDriver = async (req, res) => {
   const { id } = req.params;
-  const { code, name , name2,box_count,bottom_box_count } = req.body;
   try {
-    const [updated] = await models.Driver.update({ box_count,bottom_box_count,code, name, name2 }, {
+    const updated = await models.User.update(req.body, {
       where: { id },
     });
     if (updated) {
-      const updatedDriver = await models.Driver.findByPk(id);
+      const updatedDriver = await models.User.findByPk(id);
       res.status(200).json(updatedDriver);
     } else {
       res.status(404).json({ error: 'Driver not found' });

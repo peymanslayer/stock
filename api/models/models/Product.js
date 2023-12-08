@@ -26,9 +26,6 @@ module.exports = (sequelize) => {
     box_count: {
       type: DataTypes.BIGINT,
     },
-    floor_height:{
-      type:DataTypes.STRING
-    },
     bottom_box_count: {
       type: DataTypes.BIGINT,
     },

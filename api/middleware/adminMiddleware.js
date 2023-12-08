@@ -2,15 +2,19 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/config.json");
 const { models } = require("../models/index");
 async function adminMiddelware(req, res, next) {
-  const token = req.header("Authorization");
+  console.log(req.headers);
+  const token = req.headers.authorization;
+  const barrer=token.split(" ");
+  console.log(barrer);
   if (!token) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  const extractToken = token.split(" ")?.[1];
+  ;
   const findAdmin = await models.User.findOne({
-    where: { token: extractToken },
+    where: { token: token},
   });
+  console.log(findAdmin);
   if ((findAdmin.role && findAdmin.role === "admin")) {
     jwt.verify(findAdmin.token, config.development.JWT_SECRET, (err, dec) => {
       isAdmin(dec);

@@ -8,9 +8,9 @@ router.post('/',createStockItem);
   
 router.get('/', getAllStockItems);
   
-router.get('/:id',getStockItemById);
+router.post('/getone',getStockItemById);
   
-router.put('/:id',updateStockItem);
+router.put('/:code',updateStockItem);
   
 router.delete('/:id',deleteStockItem);
   

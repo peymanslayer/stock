@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  sequelize.define('StockItem', {
+  sequelize.define('StockItems', {
     id: {
       type: DataTypes.BIGINT,
       autoIncrement: true,
@@ -12,10 +12,6 @@ module.exports = (sequelize) => {
     },
     description:{
       type:DataTypes.STRING
-    },
-    code:{
-      type:DataTypes.STRING,
-      unique:false
     },
     vendorName:{
       type:DataTypes.STRING
@@ -43,19 +39,15 @@ module.exports = (sequelize) => {
     },
     product_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
     },
     stock_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
     },
     driver_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
     },
     vehicle_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
     },
     location: {
       type: DataTypes.STRING,
@@ -80,6 +72,9 @@ module.exports = (sequelize) => {
     production_date: {
       type: DataTypes.DATE,
       allowNull: true,
+    },
+    bin:{
+      type:DataTypes.STRING
     },
   },{
     tableName: "StockItems",

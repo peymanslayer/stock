@@ -22,8 +22,6 @@ i18n.configure({
 
 app.use(i18n.init);
 
-// Import routes
-// const validateUser = require('./validators/validateUser');
 const authRoutes = require('./routes/authRoutes');
 const productRouter = require('./routes/product');
 const stockRouter = require('./routes/stock');
@@ -32,6 +30,7 @@ const userRouter = require('./routes/user');
 const dataRouter = require('./routes/data');
 const driverRouter = require('./routes/driver');
 const vehicleRouter = require('./routes/vehicle');
+const locationRouter=require('./api/routes/locationRoute');
 
 // Use routes
 app.use('/auth', authRoutes);
@@ -42,6 +41,7 @@ app.use('/user', userRouter);
 app.use('/data', dataRouter);
 app.use('/driver', driverRouter);
 app.use('/vehicle', vehicleRouter);
+app.use('/locations',locationRouter);
 
 
 const PORT = process.env.PORT || 3000;
