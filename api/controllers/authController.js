@@ -66,7 +66,7 @@ module.exports = {
             const user = await models.User.findOne({ where: { mobile:mobile } });
             console.log(user);
             // if mobile not found
-            if (!user)  res.status(400).json({ message: "لطفا نام کاربری و رمز عبور را بررسی نمایید"  })
+            if (!user)  res.status(400).json({ message: "لطفا نام کاربری و رمز عبور را بررسی نمایید"  });
             // if mobile found compare hashed password with incoming password
             
             // console.log({mobile})

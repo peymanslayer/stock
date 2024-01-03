@@ -9,12 +9,12 @@ async function adminMiddelware(req, res, next) {
   if (!token) {
     return res.status(401).json({ error: "Unauthorized" });
   }
-
-  ;
   const findAdmin = await models.User.findOne({
     where: { token: token},
   });
-  console.log(findAdmin);
+  if(!findAdmin){
+    res.status(400).json('not admin')
+  }
   if ((findAdmin.role && findAdmin.role === "admin")) {
     jwt.verify(findAdmin.token, config.development.JWT_SECRET, (err, dec) => {
       isAdmin(dec);

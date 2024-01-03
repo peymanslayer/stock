@@ -11,6 +11,12 @@ router.post('/order',controller.orderBySituation);
 router.post('/getone',controller.findOneLocation);
 router.get('/freeCharacter',controller.findValidNumberAndCharacter);
 router.post('/orderpallet',controller.orderPallet);
-router.put('/fillpallet',controller.fillPallet)
+router.put('/fillpallet',controller.fillPallet);
+router.post('/call',controller.call);
+router.post('/free',controller.updateLocation);
+router.post('/emptyPallet',controller.fillLocationsAndSetEqualEmptyPallet);
+router.post('/newLocation',controller.newLocation);
+router.put('deleteLocation')
+router.put('/isBloced',controller.fillLocations)
 
 module.exports=router

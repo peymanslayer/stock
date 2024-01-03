@@ -15,6 +15,7 @@ module.exports = class LocationController {
   async fillLocation(req, res) {
     try {
       const fillLocation = await service.fillLocation(req.body);
+      console.log(fillLocation.message);
       res.status(fillLocation.status).json(fillLocation.message);
     } catch (err) {
       console.log(err);
@@ -25,7 +26,6 @@ module.exports = class LocationController {
   async setLocationEqualEmpty(req, res) {
     try {
       const setLocationEqualEmpty = await service.setLocationEqualEmpty(
-        req.body
       );
       res
         .status(setLocationEqualEmpty.status)
@@ -85,4 +85,50 @@ module.exports = class LocationController {
     res.status(500).json('internal server error')
    }
   }
+
+  async call(){
+    const services=await service.call();
+
+  }
+
+  async updateLocation(req,res){
+    try{
+    const result=await service.clearLocation(req.body);
+    res.status(result.status).json(result.message)
+  }catch(err){
+    console.log(err);
+    res.status(500).json('internal')
+  }
+}
+
+async fillLocationsAndSetEqualEmptyPallet(req,res){
+  try{
+  const fillLocationsAndSetEqualEmptyPallet=await service.fillLocationsAndSetEqualEmptyPallet(req.body);
+  res.status(fillLocationsAndSetEqualEmptyPallet.status).json(fillLocationsAndSetEqualEmptyPallet.message);
+  console.log(fillLocationsAndSetEqualEmptyPallet.message);
+}catch(err){
+  console.log(err);
+  res.status(500).json('internal server error');
+}
+}
+
+async newLocation(req,res){
+ try{
+  const newLocation=await service.transferLocationForStockItemProduct(req.body);
+  res.status(newLocation.status).json(newLocation.message);
+ }catch(err){
+  console.log(err);
+  res.status(500).json('internal server error')
+ }
+}
+
+async fillLocations(req,res){
+  try{
+ const fillLocations=await service.fillLocations(req.body);
+ console.log(fillLocations.message);
+ res.status(fillLocations.status).json(fillLocations.message)
+}catch(err){
+  res.status(500).json('internal')
+}
+}
 };

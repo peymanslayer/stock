@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const i18n = require('i18n');
-var cors = require('cors')
+var cors = require('cors');
 const app = express();
 
 app.use(bodyParser.json());

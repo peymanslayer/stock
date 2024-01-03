@@ -3,7 +3,7 @@ const readxslx = require("read-excel-file/node");
 const path = require("path");
 const { models } = require("../models/index");
 const XLSX = require("xlsx");
-const { fields } = require("../helper/uploadExcel");
+const axios = require("axios");
 
 module.exports = class LocationService {
   async insertLocations(excelFile) {
@@ -48,22 +48,91 @@ module.exports = class LocationService {
 
   async fillLocationProcsess(request, findedLocation) {
     if (findedLocation.situation === "empty") {
-      await models.Locations.update(request, {
+      const updateLocation= await models.Locations.update(request, {
         where: { location: findedLocation.location },
-        returning: true,
-        plain: true,
       });
+      const updatedLocation=[updateLocation]
+      if(updatedLocation==0){
+        return{
+          status:400,
+          message:'location not update'
+        }
+      }
       const result = await models.Locations.findByPk(findedLocation.id);
+      console.log(result.updatedAt,request.code_id);
+      const updateDateOfStockItem= await models.StockItems.update({
+       articleCode:request.code_id
+      },
+      {
+        where:{articleCode:request.code_id}
+      }
+      );
+      const update= [updateDateOfStockItem];
+      if(update==0){
+        return{
+          status:400,
+          message:'not update'
+        }
+      }else{
       return {
         status: 201,
         message: result,
       };
+    }
     } else {
       return {
         status: 400,
         message: "loaction is fill",
       };
     }
+  }
+  async fillLocations(request){
+    const { location } = request;
+    const findLocation = await models.Locations.findOne({
+      where: { location: location },
+    });
+    if (!findLocation) {
+      return {
+        status: 400,
+        message: "location not exist",
+      };
+    } else {
+      return await this.fillLocationsProcsess(request, findLocation);
+    }
+    
+  }
+  async fillLocationsProcsess(request, findedLocation) {
+      const updateLocation= await models.Locations.update({freeSituation:request.freeSituation}, {
+        where: { location: request.location },
+      });
+      const updatedLocation=[updateLocation]
+      if(updatedLocation==0){
+        return{
+          status:400,
+          message:'location not update'
+        }
+      }
+      const result = await models.Locations.findByPk(findedLocation.id);
+      console.log(request);
+      // const updateDateOfStockItem= await models.StockItems.update({
+      //   articleCode:request.articleCode
+      // },
+      // {
+      //   where:{articleCode:request.articleCode}
+      // }
+      // );
+      // const update=[updateDateOfStockItem]
+      // if(update==0){
+      //   return{
+      //     status:400,
+      //     message:'not update'
+      //   }
+      // }
+      return {
+        status: 201,
+        message: result,
+      };
+    
   }
 
   async fillPallet(request) {
@@ -93,34 +162,44 @@ module.exports = class LocationService {
     };
   }
 
-  async setLocationEqualEmpty(request) {
-    const { id } = request;
+  async setLocationEqualEmpty() {
     const setLocationEqualEmpty = await models.Locations.update(
-      { situation: "empty" },
-      { where: { id: id }, returning: true, plain: true }
-    );
+      { situation: "empty",
+      code_id:null,
+      freeSituation:'free',
+      description:null
 
-    console.log(setLocationEqualEmpty);
-    const result = await models.Locations.findByPk(setLocationEqualEmpty.id);
+     },
+     {
+      where:{}
+     }
+      
+    );
+   const updateAllLocations=[setLocationEqualEmpty]
+   if(updateAllLocations.length==0){
+    return{
+      status:400,
+      message:'not update'
+    }
+   }else{
     return {
       status: 200,
-      message: result,
+      message: 'updated',
     };
+  }
   }
 
   //---------------------------------
   // start logic for orderBySituation
 
   async orderBySituation(request) {
-    const reg = "/^.{4}[^1]/";
-    const regex = RegExp(reg);
-    console.log(regex.test("A2011"));
     const limitNumber = Math.ceil(request);
     const after = await models.Locations.findAll({
       order: [["location", "ASC"]],
       where: {
         location: {
           [Op.between]: ["A0111", "T2337"],
+          [Op.notLike]: "%1",
         },
         situation: {
           [Op.eq]: "empty",
@@ -293,7 +372,7 @@ module.exports = class LocationService {
       for (let i = 0; i < stock.length; i++) {
         let findArticle = await models.StockItems.findOne({
           where: { articleCode: stock[i].articleCode },
-          include: [{ model: models.Locations, as: "locations" }],
+          include: [{ model: models.Locations,as:'locations' }],
         });
         findArticle;
         stockResult.push(findArticle);
@@ -366,24 +445,21 @@ module.exports = class LocationService {
         //         )
         //       );
         //     }
-         
+
         // }
-        const loaction=await this.orderBySituation(result);
+        console.log(ok);
+        const loaction = await this.orderBySituation(result);
         return {
           status: 200,
           message: {
-          ok,
-          loaction
+            ok,
+            loaction,
           },
         };
       }
     }
   }
   async orderBySituations(pallet, request) {
-    const reg = "/^.{4}[^1]/";
-    const regex = RegExp(reg);
-    console.log(request);
-    console.log(regex.test("A2011"));
     const limitNumber = Math.ceil(pallet / 2);
     const after = await models.Locations.findAll({
       order: [["location", "ASC"]],
@@ -422,4 +498,154 @@ module.exports = class LocationService {
       },
     };
   }
+
+  async call() {
+    axios
+      .post("https://nodejs.iran.liara.run/locations/orderpallet", {
+        driverName: "محمد زینالی ",
+      })
+      .then((x) => {
+        console.log(x.data);
+      });
+  }
+
+  async clearLocation(request) {
+    const [mi] = await models.Locations.update(request, {
+      where: { situation: "fill" },
+    });
+    if (mi) {
+      return {
+        status: 200,
+        message: "update",
+      };
+    } else {
+      return {
+        status: 400,
+        message: "not update",
+      };
+    }
+  }
+
+  async fillLocationsAndSetEqualEmptyPallet(request) {
+    const { articleCode, location,driverName } = request;
+    const oldloaction=await models.Locations.findOne({
+      where:{location:location}
+     });
+     if(oldloaction.situation=='fill'){
+      return{
+        status:400,
+        message:'location is fill'
+      }
+     };
+    const updateLocation = await models.Locations.update(
+      {
+        situation: "fill",
+        code_id:articleCode
+      },
+      {
+        where: { location: location },
+      }
+    );
+    console.log(updateLocation);
+    if (updateLocation.length === 0) {
+      return {
+        status: 400,
+        message: "location not update",
+      };
+    } else {
+      const updateStockItem = await models.StockItems.findOne({
+        where:{articleCode:articleCode}
+      });
+     
+      if(updateStockItem.length===0){
+        return{
+          status:200,
+          message:'pallet deleted'
+        }
+        
+        }else{
+          console.log(updateStockItem.pallet);
+          updateStockItem.pallet= parseInt(updateStockItem.pallet)-1;
+           updateStockItem.save();
+
+          const orderPallet=await this.orderPallet(request);
+          console.log( parseInt(updateStockItem.pallet)-1);
+          return{
+            status:400,
+            message:orderPallet
+          }
+        }
+    }
+  }
+
+  async transferLocationForStockItemProduct(request){
+   const {articleCode,oldlocation,newLocation}=request;
+
+   const findStockItem=await models.StockItems.findOne({
+    where:{articleCode:articleCode}
+   });
+
+   if(findStockItem){
+   const findLocations=await models.Locations.findAll({
+    where:{code_id:findStockItem.articleCode}
+   });
+    return await this.transferLocationForStockItemProductProcess(findLocations,oldlocation,newLocation,articleCode)
+    
+   }else{
+    return{
+      status:400,
+      message:'not product'
+    }
+   }
+  }
+
+  async transferLocationForStockItemProductProcess(findedLocations,oldloaction,newLocation,articleCode){
+   let insertLocationToArray=[];
+   for(let i=0;i<findedLocations.length;i++){
+     insertLocationToArray.push(findedLocations[i].location);
+   } 
+   for(let i=0;i<insertLocationToArray.length;i++){
+    if(insertLocationToArray[i].loaction==oldloaction){
+      selectedLocation=oldloaction
+    }else{
+
+    }
+   };
+   console.log(articleCode,newLocation);
+   const updateLocation=await models.Locations.update({
+    code_id:articleCode,
+    situation:'fill'
+   },
+   {
+    where:{location:newLocation}
+   })
+
+   const setEmptyToLocation=await models.Locations.update({
+    situation:'empty',
+    code_id:null
+   },{
+    where:{location:oldloaction}
+   }).then(res=>{
+    console.log(res);
+   })
+  const isNewLocationUpdated=[updateLocation];
+  const isOldloactionUpdated=[setEmptyToLocation];
+    if(isNewLocationUpdated===0){
+      return {
+        status:400,
+        message:'location not updated'
+      }
+    }else if(isOldloactionUpdated===0){
+      return{
+        status:400,
+        message:'location not update'
+      }
+    }else{
+      return{
+        status:200,
+        message:'location update'
+      }
+    }
+  }
+
 };
